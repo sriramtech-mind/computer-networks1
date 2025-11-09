@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Campus Intrusion Detection System</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="header">
+        <div class="container">
+          <div class="logo">
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <h1>Campus Network IDS</h1>
+          </div>
+          <div class="status-indicator">
+            <span class="status-dot status-active"></span>
+            <span>System Active</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-container">
+        <div class="container">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon traffic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="2" x2="12" y2="22"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </div>
+              <div class="stat-content">
+                <div class="stat-label">Total Traffic</div>
+                <div class="stat-value" id="totalTraffic">0 GB</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon connections">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <div class="stat-content">
+                <div class="stat-label">Active Connections</div>
+                <div class="stat-value" id="activeConnections">0</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon threats">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </div>
+              <div class="stat-content">
+                <div class="stat-label">Threats Detected</div>
+                <div class="stat-value" id="threatsDetected">0</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon blocked">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                </svg>
+              </div>
+              <div class="stat-content">
+                <div class="stat-label">Threats Blocked</div>
+                <div class="stat-value" id="threatsBlocked">0</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="content-grid">
+            <div class="section-card">
+              <div class="section-header">
+                <h2>Recent Alerts</h2>
+                <select id="alertFilter" class="filter-select">
+                  <option value="all">All Alerts</option>
+                  <option value="new">New</option>
+                  <option value="critical">Critical</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+              <div class="alerts-list" id="alertsList">
+                <div class="empty-state">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
+                  <p>No alerts detected</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-card">
+              <div class="section-header">
+                <h2>Network Activity</h2>
+                <button id="refreshBtn" class="icon-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <polyline points="1 20 1 14 7 14"></polyline>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="activity-chart" id="activityChart">
+                <canvas id="chartCanvas"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-card">
+            <div class="section-header">
+              <h2>Network Events</h2>
+              <div class="header-actions">
+                <input type="text" id="searchEvents" class="search-input" placeholder="Search IP, protocol...">
+                <button id="blockIpBtn" class="btn btn-secondary">Manage Blocked IPs</button>
+              </div>
+            </div>
+            <div class="table-container">
+              <table class="events-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Source IP</th>
+                    <th>Destination IP</th>
+                    <th>Protocol</th>
+                    <th>Port</th>
+                    <th>Threat Level</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="eventsTable">
+                  <tr>
+                    <td colspan="8" class="no-data">Loading events...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <div id="blockIpModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Blocked IP Addresses</h2>
+            <button class="close-btn" id="closeModal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="block-ip-form">
+              <input type="text" id="ipToBlock" placeholder="Enter IP address" class="input">
+              <input type="text" id="blockReason" placeholder="Reason for blocking" class="input">
+              <button id="addBlockBtn" class="btn btn-primary">Block IP</button>
+            </div>
+            <div class="blocked-ips-list" id="blockedIpsList">
+              <div class="empty-state">
+                <p>No IPs blocked</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="eventModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Event Details</h2>
+            <button class="close-btn" id="closeEventModal">&times;</button>
+          </div>
+          <div class="modal-body" id="eventDetails">
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
